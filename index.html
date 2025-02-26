@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OFF REQUEST FORM</title>
+    <title>TIME-OFF REQUEST</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,7 +22,7 @@
         input, select, textarea {
             width: 100%;
             padding: 10px;
-            margin: 5px 0;
+            margin: 5px 10px 5px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
@@ -43,13 +43,16 @@
 <body>
 
 <div class="container">
-    <h2>OFF REQUEST FORM</h2>
+    <h2>TIME-OFF REQUEST</h2>
     <form id="offRequestForm">
         <label for="name">Full Name:</label>
         <input type="text" id="name" name="name" required>
 
-        <label for="date">Date Off:</label>
+        <label for="date">Start Date:</label>
         <input type="date" id="date" name="date" required>
+
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
 
         <label for="reason">Reason:</label>
         <textarea id="reason" name="reason" rows="3" required></textarea>
@@ -69,10 +72,11 @@
         event.preventDefault();
         let name = document.getElementById("name").value;
         let date = document.getElementById("date").value;
+        let endDate = document.getElementById("end_date").value;
         let reason = document.getElementById("reason").value;
         let eld = document.getElementById("eld").value;
 
-        let message = `🚗 **OFF REQUEST** 🚗\n\n🔹 **Name:** ${name}\n🔹 **Date Off:** ${date}\n🔹 **Reason:** ${reason}\n🔹 **Pause ELD?** ${eld}`;
+        let message = `🚗 **TIME-OFF REQUEST** 🚗\n\n🔹 **Name:** ${name}\n🔹 **Start Date:** ${date}\n🔹 **End Date:** ${endDate}\n🔹 **Reason:** ${reason}\n🔹 **Pause ELD?** ${eld}`;
         
         let telegramBotToken = "YOUR_BOT_TOKEN";  // Replace with your bot token
         let telegramChatId = "YOUR_CHAT_ID";  // Replace with the chat ID
