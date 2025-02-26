@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OFF REQUEST FORM</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>OFF REQUEST FORM</h2>
+    <form id="offRequestForm">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="date">Date Off:</label>
+        <input type="date" id="date" name="date" required>
+
+        <label for="reason">Reason:</label>
+        <textarea id="reason" name="reason" rows="3" required></textarea>
+
+        <label for="eld">Pause ELD?</label>
+        <select id="eld" name="eld">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById("offRequestForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        let name = document.getElementById("name").value;
+        let date = document.getElementById("date").value;
+        let reason = document.getElementById("reason").value;
+        let eld = document.getElementById("eld").value;
+
+        let message = `🚗 **OFF REQUEST** 🚗\n\n🔹 **Name:** ${name}\n🔹 **Date Off:** ${date}\n🔹 **Reason:** ${reason}\n🔹 **Pause ELD?** ${eld}`;
+        
+        let telegramBotToken = "YOUR_BOT_TOKEN";  // Replace with your bot token
+        let telegramChatId = "YOUR_CHAT_ID";  // Replace with the chat ID
+
+        fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(message)}`)
+            .then(response => response.json())
+            .then(data => alert("Request Sent Successfully!"))
+            .catch(error => alert("Error sending request."));
+    });
+</script>
+
+</body>
+</html>
