@@ -93,7 +93,7 @@
         // Telegram Bot Token and Group Info
         let telegramBotToken = "7001677306:AAEJAEzCghnWuhPrOwebvivD789BXn-6wm4";  // Replace with your bot token
         let telegramChatId = "-1002351667124";  // Replace with the group chat ID (must be a supergroup)
-        let messageThreadId = "2";  // Replace with your desired topic ID (thread ID)
+        let messageThreadId = 2;  // Replace with your desired topic ID (thread ID)
 
         // Send the message to the specific topic in the group
         fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&message_thread_id=${messageThreadId}&text=${encodeURIComponent(message)}`)
