@@ -57,7 +57,7 @@
 
 <div class="container">
     <h2>TIME-OFF REQUEST</h2>
-    <form id="offRequestForm">
+    <form id="offRequestForm" onsubmit="return submitForm(event)">
         <label for="name">Full Name:</label>
         <input type="text" id="name" name="name" required>
 
@@ -72,11 +72,12 @@
 
         <p id="offDays"></p>
 
-        <button type="button" onclick="calculateDays()">Submit</button>
+        <button type="submit">Submit</button>
     </form>
 </div>
 
 <script>
+    // Function to calculate off days
     function calculateDays() {
         const dateFrom = document.getElementById('date_from').value;
         const dateTill = document.getElementById('date_till').value;
@@ -89,12 +90,24 @@
                 const timeDiff = endDate - startDate;
                 const daysOff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include the start date
                 document.getElementById('offDays').textContent = `Total Off Days: ${daysOff} days`;
+                return daysOff;  // return the calculated days off
             } else {
                 document.getElementById('offDays').textContent = 'Error: The "From" date must be before the "Till" date.';
+                return null;
             }
         }
     }
-</script>
 
-</body>
-</html>
+    // Function to handle form submission
+    function submitForm(event) {
+        event.preventDefault(); // Prevents the form from submitting normally
+        
+        // Calculate the off days
+        const daysOff = calculateDays();
+
+        if (daysOff !== null) {
+            // Normally, you would submit this data to your server here
+            alert("Form submitted! Total Off Days: " + daysOff);
+            
+            // You can submit the form data here if needed, like an AJAX call
+            // Exa
