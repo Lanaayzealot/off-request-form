@@ -47,12 +47,9 @@
         button:hover {
             background-color: #218838;
         }
-        #offDays, #warningMessage {
+        #offDays {
             font-weight: bold;
             margin-top: 10px;
-        }
-        #warningMessage {
-            color: red;
         }
     </style>
 </head>
@@ -61,6 +58,9 @@
 <div class="container">
     <h2>TIME-OFF REQUEST</h2>
     <form id="offRequestForm" onsubmit="return submitForm(event)">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required>
+
         <label for="company">Company:</label>
         <select id="company" name="company" required>
             <option value="Sayram Express LLC">Sayram Express LLC</option>
@@ -68,9 +68,6 @@
             <option value="Iconic Logistics">Iconic Logistics</option>
             <option value="Sayram Logistics LLC">Sayram Logistics LLC</option>
         </select>
-
-        <label for="name">Full Name:</label>
-        <input type="text" id="name" name="name" required>
 
         <label for="date_from">Date Off (From):</label>
         <input type="date" id="date_from" name="date_from" required>
@@ -82,7 +79,6 @@
         <textarea id="reason" name="reason" rows="3" required></textarea>
 
         <p id="offDays"></p>
-        <p id="warningMessage"></p>
 
         <button type="submit">Submit</button>
     </form>
@@ -111,32 +107,43 @@
     }
 
     // Function to handle form submission
-    function submitForm(event) {
+    async function submitForm(event) {
         event.preventDefault(); // Prevents the form from submitting normally
-        
+
         // Calculate the off days
         const daysOff = calculateDays();
 
         if (daysOff !== null) {
-            const company = document.getElementById('company').value;
             const name = document.getElementById('name').value;
+            const company = document.getElementById('company').value;
             const reason = document.getElementById('reason').value;
-            const message = `Time-Off Request from ${company}:\nFull Name: ${name}\nReason: ${reason}\nTotal Off Days: ${daysOff} days`;
 
-            // Show the message and warn if the off days are more than 7
+            // Prepare the message to send
+            let messageText = `Time-Off Request:\nName: ${name}\nCompany: ${company}\nFrom: ${document.getElementById('date_from').value}\nTill: ${document.getElementById('date_till').value}\nReason: ${reason}\nTotal Off Days: ${daysOff} days`;
+
+            // Add warning if the number of days is more than 7
             if (daysOff > 7) {
-                document.getElementById('warningMessage').textContent = 'Warning: The off days exceed 7. Please consider turning off the ELD.';
-            } else {
-                document.getElementById('warningMessage').textContent = ''; // Clear warning if days are less than or equal to 7
+                messageText += `\n\nWarning: The requested time off exceeds 7 days. Please review the request.`;
             }
 
-            // Normally, you would submit this data to your server here
-            alert("Form submitted! Here's the message:\n" + message);
-            
-            // Reset the form after submission
-            document.getElementById('offRequestForm').reset();
-            document.getElementById('offDays').textContent = ''; // Clear off days message
-            document.getElementById('warningMessage').textContent = ''; // Clear warning message
+            // Send the message to the Telegram bot (this will need to be set up on the server side)
+            const response = await fetch('https://your-server-endpoint/send-telegram-message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: messageText
+                })
+            });
+
+            if (response.ok) {
+                alert("Your time-off request has been submitted successfully!");
+                document.getElementById('offRequestForm').reset();
+                document.getElementById('offDays').textContent = ''; // Clear off days message
+            } else {
+                alert("Error: Could not submit your request. Please try again later.");
+            }
         }
     }
 </script>
