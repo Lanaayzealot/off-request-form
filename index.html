@@ -97,6 +97,7 @@
         let telegramBotToken = "7001677306:AAEJAEzCghnWuhPrOwebvivD789BXn-6wm4";  // Replace with your bot token
         let telegramChatId = "-1002351667124";  // Replace with the chat ID
         let threadId = 6;
+        
         // Debugging: Output URL for telegram API
         const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(message)}&parse_mode=HTML`;
         console.log(url);
