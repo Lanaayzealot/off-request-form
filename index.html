@@ -90,9 +90,10 @@
         
         let telegramBotToken = "7001677306:AAEJAEzCghnWuhPrOwebvivD789BXn-6wm4";  // Replace with your bot token
         let telegramChatId = "-1002351667124"; // Replace with your Telegram group chat ID
-        let threadId = 59; // Replace with your thread ID (this is the specific thread you want the message to go to)
+        let  messageThreadId = 59; // Replace with your thread ID (this is the specific thread you want the message to go to)
 
-        const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(message)}&parse_mode=HTML&thread_id=${threadId}`;
+       const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(message)}&parse_mode=HTML&message_thread_id=${messageThreadId}`;
+
         
         fetch(url)
             .then(response => response.json())
