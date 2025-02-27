@@ -66,48 +66,4 @@
         <label for="reason">Reason:</label>
         <textarea id="reason" name="reason" rows="3" required></textarea>
 
-        <label for="eld">Pause ELD?</label>
-        <select id="eld" name="eld">
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-        </select>
-
-        <button type="submit">Submit</button>
-    </form>
-</div>
-
-<script>
-    document.getElementById("offRequestForm").addEventListener("submit", function(event) {
-        event.preventDefault();
-        
-        // Collect form data
-        let name = document.getElementById("name").value;
-        let dateFrom = document.getElementById("date_from").value;
-        let dateTill = document.getElementById("date_till").value;
-        let reason = document.getElementById("reason").value;
-        let eld = document.getElementById("eld").value;
-
-        // Format the message (plain text without any ** for bold text)
-        let message = `‼️ TIME-OFF REQUEST \n\n🔹 Name:  ${name}\n🔹 Date Off:  From ${dateFrom} till  ${dateTill}\n🔹 Reason:  ${reason}\n🔹 Pause ELD?  ${eld}`;
-        
-        // Telegram Bot Token and Group Info
-        let telegramBotToken = "7001677306:AAEJAEzCghnWuhPrOwebvivD789BXn-6wm4";  // Replace with your bot token
-        let telegramChatId = "-1002351667124";  // Replace with the group chat ID (must be a supergroup)
-        let messageThreadId = 2;  // Replace with your desired topic ID (thread ID)
-
-        // Send the message to the specific topic in the group
-        fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&message_thread_id=${messageThreadId}&text=${encodeURIComponent(message)}&parse_mode=HTML`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.ok) {
-                    alert("Request Sent Successfully!");
-                } else {
-                    alert("Error: " + data.description);
-                }
-            })
-            .catch(error => alert("Error sending request."));
-    });
-</script>
-
-</body>
-</html>
+      
