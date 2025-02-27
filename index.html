@@ -87,8 +87,8 @@
         let reason = document.getElementById("reason").value;
         let eld = document.getElementById("eld").value;
 
-        // Format the message
-        let message = `🚗 **TIME-OFF REQUEST** 🚗\n\n🔹 **Name:** ${name}\n🔹 **Date Off:** From ${dateFrom} Till ${dateTill}\n🔹 **Reason:** ${reason}\n🔹 **Pause ELD?** ${eld}`;
+        // Format the message (without ** symbols for bold text)
+        let message = `🚗 TIME-OFF REQUEST 🚗\n\n🔹 Name: ${name}\n🔹 Date Off: From ${dateFrom} Till ${dateTill}\n🔹 Reason: ${reason}\n🔹 Pause ELD? ${eld}`;
         
         // Telegram Bot Token and Group Info
         let telegramBotToken = "7001677306:AAEJAEzCghnWuhPrOwebvivD789BXn-6wm4";  // Replace with your bot token
@@ -101,13 +101,4 @@
             .then(data => {
                 if (data.ok) {
                     alert("Request Sent Successfully!");
-                } else {
-                    alert("Error: " + data.description);
-                }
-            })
-            .catch(error => alert("Error sending request."));
-    });
-</script>
-
-</body>
-</html>
+       
