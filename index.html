@@ -95,8 +95,8 @@
         let message = `🚗 <b>TIME-OFF REQUEST</b> 🚗\n\n🔹 <b>Name:</b> ${name}\n🔹 <b>Date Off:</b> From ${dateFrom} Till ${dateTill}\n🔹 <b>Reason:</b> ${reason}\n🔹 <b>Pause ELD?</b> ${eld}`;
         
         let telegramBotToken = "7001677306:AAEJAEzCghnWuhPrOwebvivD789BXn-6wm4";  // Replace with your bot token
-        let telegramChatId = "-1002351667124";  // Replace with the chat ID
-        let threadId = 2;
+     let chatId = "-1002351667124";  // Replace with your group chat ID
+let threadId = 2;  // The thread ID to send the message to
         
         // Debugging: Output URL for telegram API
         const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(message)}&parse_mode=HTML`;
