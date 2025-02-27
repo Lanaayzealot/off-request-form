@@ -47,6 +47,10 @@
         button:hover {
             background-color: #218838;
         }
+        #offDays {
+            font-weight: bold;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -58,12 +62,39 @@
         <input type="text" id="name" name="name" required>
 
         <label for="date_from">Date Off (From):</label>
-        <input type="text" id="date_from" name="date_from" placeholder="MM/DD/YYYY" required>
+        <input type="date" id="date_from" name="date_from" required>
 
-        <label for="date_till">Date Off (till):</label>
-        <input type="text" id="date_till" name="date_till" placeholder="MM/DD/YYYY" required>
+        <label for="date_till">Date Off (Till):</label>
+        <input type="date" id="date_till" name="date_till" required>
 
         <label for="reason">Reason:</label>
         <textarea id="reason" name="reason" rows="3" required></textarea>
 
-      
+        <p id="offDays"></p>
+
+        <button type="button" onclick="calculateDays()">Submit</button>
+    </form>
+</div>
+
+<script>
+    function calculateDays() {
+        const dateFrom = document.getElementById('date_from').value;
+        const dateTill = document.getElementById('date_till').value;
+
+        if (dateFrom && dateTill) {
+            const startDate = new Date(dateFrom);
+            const endDate = new Date(dateTill);
+
+            if (startDate <= endDate) {
+                const timeDiff = endDate - startDate;
+                const daysOff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include the start date
+                document.getElementById('offDays').textContent = `Total Off Days: ${daysOff} days`;
+            } else {
+                document.getElementById('offDays').textContent = 'Error: The "From" date must be before the "Till" date.';
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
