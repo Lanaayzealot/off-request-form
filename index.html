@@ -51,6 +51,11 @@
             font-weight: bold;
             margin-top: 10px;
         }
+        #eldMessage {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -60,6 +65,14 @@
     <form id="offRequestForm" onsubmit="return submitForm(event)">
         <label for="name">Full Name:</label>
         <input type="text" id="name" name="name" required>
+
+        <label for="company">Company:</label>
+        <select id="company" name="company" required>
+            <option value="Sayram Express LLC">Sayram Express LLC</option>
+            <option value="Golden Mile LLC">Golden Mile LLC</option>
+            <option value="Iconic Logistics LLC">Iconic Logistics LLC</option>
+            <option value="Sayram Logistics LLC">Sayram Logistics LLC</option>
+        </select>
 
         <label for="date_from">Date Off (From):</label>
         <input type="date" id="date_from" name="date_from" required>
@@ -71,6 +84,7 @@
         <textarea id="reason" name="reason" rows="3" required></textarea>
 
         <p id="offDays"></p>
+        <p id="eldMessage"></p>
 
         <button type="submit">Submit</button>
     </form>
@@ -90,7 +104,15 @@
                 const timeDiff = endDate - startDate;
                 const daysOff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include the start date
                 document.getElementById('offDays').textContent = `Total Off Days: ${daysOff} days`;
-                return daysOff;  // return the calculated days off
+
+                // Show message if off days are greater than 7
+                if (daysOff > 7) {
+                    document.getElementById('eldMessage').textContent = 'Please turn off ELD as the number of off days is more than 7.';
+                } else {
+                    document.getElementById('eldMessage').textContent = '';  // Clear ELD message if days are less than or equal to 7
+                }
+
+                return daysOff;
             } else {
                 document.getElementById('offDays').textContent = 'Error: The "From" date must be before the "Till" date.';
                 return null;
@@ -100,14 +122,24 @@
 
     // Function to handle form submission
     function submitForm(event) {
-        event.preventDefault(); // Prevents the form from submitting normally
+        event.preventDefault(); // Prevent the form from submitting normally
         
         // Calculate the off days
         const daysOff = calculateDays();
 
         if (daysOff !== null) {
             // Normally, you would submit this data to your server here
-            alert("Form submitted! Total Off Days: " + daysOff);
-            
-            // You can submit the form data here if needed, like an AJAX call
-            // Exa
+            alert(`Form submitted!\nTotal Off Days: ${daysOff} days`);
+
+            // Here you can also send the form data (name, company, dates, reason, days off) to the server or other logic
+
+            // Reset the form after submission
+            document.getElementById('offRequestForm').reset();
+            document.getElementById('offDays').textContent = ''; // Clear off days message
+            document.getElementById('eldMessage').textContent = ''; // Clear ELD message
+        }
+    }
+</script>
+
+</body>
+</html>
