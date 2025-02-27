@@ -86,11 +86,11 @@
         let reason = document.getElementById("reason").value;
         let eld = document.getElementById("eld").value;
 
-        let message = `🚗 TIME-OFF REQUEST 🚗\n\n🔹 Name: ${name}\n🔹 Date Off: From ${dateFrom} till ${dateTill}\n🔹 Reason: ${reason}\n🔹 Pause ELD? ${eld}`;
+        let message = ` TIME-OFF REQUEST \n\n🔹 Name: ${name}\n🔹 Date Off: From ${dateFrom} till ${dateTill}\n🔹 Reason: ${reason}\n🔹 Pause ELD? ${eld}`;
         
         let telegramBotToken = "7001677306:AAEJAEzCghnWuhPrOwebvivD789BXn-6wm4";  // Replace with your bot token
         let telegramChatId = "-1002351667124"; // Replace with your Telegram group chat ID
-        let  threadId = 59; // Replace with your thread ID (this is the specific thread you want the message to go to)
+        let threadId = 59; // Replace with your thread ID (this is the specific thread you want the message to go to)
 
         const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(message)}&parse_mode=HTML&thread_id=${threadId}`;
         
