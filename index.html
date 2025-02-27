@@ -92,13 +92,11 @@
 
         console.log(`Form submitted: ${name}, ${dateFrom}, ${dateTill}, ${reason}, ${eld}`);
 
-        let message = `🚗 <b>TIME-OFF REQUEST</b> 🚗\n\n🔹 <b>Name:</b> ${name}\n🔹 <b>Date Off:</b> From ${dateFrom} Till ${dateTill}\n🔹 <b>Reason:</b> ${reason}\n🔹 <b>Pause ELD?</b> ${eld}`;
+        let message = `❗️ <b>TIME-OFF REQUEST</b> \n\n🔹 <b>Name:</b>  ${name}\n🔹 <b>Date Off:</b>  From ${dateFrom}  till ${dateTill}\n🔹 <b>Reason:</b>  ${reason}\n🔹  <b>Pause ELD?</b>  ${eld}`;
         let telegramBotToken = "7001677306:AAEJAEzCghnWuhPrOwebvivD789BXn-6wm4";  // Replace with your bot token
-     const telegramChatId = '-1002351667124'; // Replace with your Telegram group chat ID
-const threadId = 2; // Replace with your thread ID (this is the specific thread you want the message to go to)
-
-const message = `🚗 TIME-OFF REQUEST 🚗\n\n🔹 **Name:** Lana Ayz\n🔹 **Date Off:** From 02/28/2025 Till 03/31/2025\n🔹 **Reason:** vacation! hawaiiiiiiii\n🔹 **Pause ELD?** Yes`;
-
+        let telegramChatId = '-1002351667124'; // Replace with your Telegram group chat ID
+        let  threadId = 2; // Replace with your thread ID (this is the specific thread you want the message to go to)
+       
 fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
   method: 'POST',
   headers: {
