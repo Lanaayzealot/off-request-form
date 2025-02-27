@@ -93,19 +93,26 @@
         console.log(`Form submitted: ${name}, ${dateFrom}, ${dateTill}, ${reason}, ${eld}`);
 
         let message = `🚗 <b>TIME-OFF REQUEST</b> 🚗\n\n🔹 <b>Name:</b> ${name}\n🔹 <b>Date Off:</b> From ${dateFrom} Till ${dateTill}\n🔹 <b>Reason:</b> ${reason}\n🔹 <b>Pause ELD?</b> ${eld}`;
-        
         let telegramBotToken = "7001677306:AAEJAEzCghnWuhPrOwebvivD789BXn-6wm4";  // Replace with your bot token
-     let chatId = "-1002351667124";  // Replace with your group chat ID
-let threadId = 6;  // The thread ID to send the message to
-        
-        // Debugging: Output URL for telegram API
-        const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(message)}&parse_mode=HTML`;
-        console.log(url);
+     const telegramChatId = '-1002351667124'; // Replace with your Telegram group chat ID
+const threadId = 2; // Replace with your thread ID (this is the specific thread you want the message to go to)
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => alert("Request Sent Successfully!"))
-            .catch(error => alert("Error sending request."));
+const message = `🚗 TIME-OFF REQUEST 🚗\n\n🔹 **Name:** Lana Ayz\n🔹 **Date Off:** From 02/28/2025 Till 03/31/2025\n🔹 **Reason:** vacation! hawaiiiiiiii\n🔹 **Pause ELD?** Yes`;
+
+fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    chat_id: telegramChatId,
+    text: message,
+    message_thread_id: threadId // This ensures the message is sent to the specific thread
+  })
+})
+  .then(response => response.json())
+  .then(data => console.log('Message sent successfully:', data))
+  .catch(error => console.error('Error sending message:', error));
     });
 </script>
 
