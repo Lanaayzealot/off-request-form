@@ -92,10 +92,7 @@
         let telegramBotToken = "YOUR_BOT_TOKEN";  // Replace with your bot token
         let telegramChatId = "YOUR_CHAT_ID";  // Replace with the chat ID
 
-        // Make sure the URL is properly encoded
-        const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(message)}&parse_mode=HTML`;
-
-        fetch(url)
+        fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&parse_mode=HTML&text=${encodeURIComponent(message)}`)
             .then(response => response.json())
             .then(data => alert("Request Sent Successfully!"))
             .catch(error => alert("Error sending request."));
