@@ -47,13 +47,12 @@
         button:hover {
             background-color: #218838;
         }
-        #offDays {
+        #offDays, #warningMessage {
             font-weight: bold;
             margin-top: 10px;
         }
         #warningMessage {
             color: red;
-            font-weight: bold;
         }
     </style>
 </head>
@@ -62,9 +61,6 @@
 <div class="container">
     <h2>TIME-OFF REQUEST</h2>
     <form id="offRequestForm" onsubmit="return submitForm(event)">
-        <label for="name">Full Name:</label>
-        <input type="text" id="name" name="name" required>
-
         <label for="company">Company:</label>
         <select id="company" name="company" required>
             <option value="Sayram Express LLC">Sayram Express LLC</option>
@@ -72,6 +68,9 @@
             <option value="Iconic Logistics">Iconic Logistics</option>
             <option value="Sayram Logistics LLC">Sayram Logistics LLC</option>
         </select>
+
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required>
 
         <label for="date_from">Date Off (From):</label>
         <input type="date" id="date_from" name="date_from" required>
@@ -103,14 +102,6 @@
                 const timeDiff = endDate - startDate;
                 const daysOff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include the start date
                 document.getElementById('offDays').textContent = `Total Off Days: ${daysOff} days`;
-
-                // Show warning if days off is greater than 7
-                if (daysOff > 7) {
-                    document.getElementById('warningMessage').textContent = 'Warning: The number of off days is more than 7. Please confirm if this is correct.';
-                } else {
-                    document.getElementById('warningMessage').textContent = '';
-                }
-
                 return daysOff;  // return the calculated days off
             } else {
                 document.getElementById('offDays').textContent = 'Error: The "From" date must be before the "Till" date.';
@@ -127,20 +118,21 @@
         const daysOff = calculateDays();
 
         if (daysOff !== null) {
-            // Retrieve form data
-            const fullName = document.getElementById('name').value;
             const company = document.getElementById('company').value;
+            const name = document.getElementById('name').value;
             const reason = document.getElementById('reason').value;
+            const message = `Time-Off Request from ${company}:\nFull Name: ${name}\nReason: ${reason}\nTotal Off Days: ${daysOff} days`;
 
-            // Normally, you would send this data to your server here via AJAX
-            // Example: sending the data to the server
+            // Show the message and warn if the off days are more than 7
+            if (daysOff > 7) {
+                document.getElementById('warningMessage').textContent = 'Warning: The off days exceed 7. Please consider turning off the ELD.';
+            } else {
+                document.getElementById('warningMessage').textContent = ''; // Clear warning if days are less than or equal to 7
+            }
 
-            // For demonstration, just show an alert with the form data
-            alert(`Form submitted!\nName: ${fullName}\nCompany: ${company}\nOff Days: ${daysOff} days\nReason: ${reason}`);
-
-            // You can send this information to a backend or display a confirmation message
-            // Example: send an AJAX request to your server
-
+            // Normally, you would submit this data to your server here
+            alert("Form submitted! Here's the message:\n" + message);
+            
             // Reset the form after submission
             document.getElementById('offRequestForm').reset();
             document.getElementById('offDays').textContent = ''; // Clear off days message
