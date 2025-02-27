@@ -87,8 +87,8 @@
 
         let message = `🚗 **TIME-OFF REQUEST** 🚗\n\n🔹 **Name:** ${name}\n🔹 **Date Off:** From ${dateFrom} Till ${dateTill}\n🔹 **Reason:** ${reason}\n🔹 **Pause ELD?** ${eld}`;
         
-        let telegramBotToken = "YOUR_BOT_TOKEN";  // Replace with your bot token
-        let telegramChatId = "YOUR_CHAT_ID";  // Replace with the chat ID
+        let telegramBotToken = "7001677306:AAEJAEzCghnWuhPrOwebvivD789BXn-6wm4";  // Replace with your bot token
+        let telegramChatId = "-1002351667124";  // Replace with the chat ID
 
         fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(message)}`)
             .then(response => response.json())
