@@ -1,5 +1,3 @@
-You said:
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,10 +60,42 @@ You said:
         <label for="date_from">Date Off (From):</label>
         <input type="text" id="date_from" name="date_from" placeholder="MM/DD/YYYY" required>
 
-        <label for="date_till">Date Off (till):</label>
+        <label for="date_till">Date Off (Till):</label>
         <input type="text" id="date_till" name="date_till" placeholder="MM/DD/YYYY" required>
 
         <label for="reason">Reason:</label>
         <textarea id="reason" name="reason" rows="3" required></textarea>
 
+        <label for="eld">Pause ELD?</label>
+        <select id="eld" name="eld">
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
 
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById("offRequestForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        let name = document.getElementById("name").value;
+        let dateFrom = document.getElementById("date_from").value;
+        let dateTill = document.getElementById("date_till").value;
+        let reason = document.getElementById("reason").value;
+        let eld = document.getElementById("eld").value;
+
+        let message = `🚗 **TIME-OFF REQUEST** 🚗\n\n🔹 **Name:** ${name}\n🔹 **Date Off:** From ${dateFrom} Till ${dateTill}\n🔹 **Reason:** ${reason}\n🔹 **Pause ELD?** ${eld}`;
+        
+        let telegramBotToken = "YOUR_BOT_TOKEN";  // Replace with your bot token
+        let telegramChatId = "YOUR_CHAT_ID";  // Replace with the chat ID
+
+        fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(message)}`)
+            .then(response => response.json())
+            .then(data => alert("Request Sent Successfully!"))
+            .catch(error => alert("Error sending request."));
+    });
+</script>
+
+</body>
+</html>
