@@ -21,6 +21,8 @@ def send_message():
         required_fields = ["name", "dateFrom", "dateTill", "reason", "eld"]
         if not all(field in data and data[field] for field in required_fields):
             return jsonify({"success": False, "error": "Missing or invalid data"}), 400
+            return jsonify({"success": False, "error": "Failed to send message to Telegram"}), 500
+
 
         # Extract values
         name = data["name"]
