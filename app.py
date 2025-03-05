@@ -6,7 +6,8 @@ app = Flask(__name__)
 CORS(app)
 
 # Telegram Bot Configuration
-TELEGRAM_BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"  # Replace with your bot token
+import os
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = "-1002351667124"  # Replace with your Telegram group chat ID
 MESSAGE_THREAD_ID = 59  # Replace with your specific thread ID (if required)
 USER_ID = "7122508724"  # Lana's Telegram user ID
