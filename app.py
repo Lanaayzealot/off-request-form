@@ -21,8 +21,6 @@ def send_message():
         required_fields = ["name", "dateFrom", "dateTill", "reason", "eld"]
         if not all(field in data and data[field] for field in required_fields):
             return jsonify({"success": False, "error": "Missing or invalid data"}), 400
-            return jsonify({"success": False, "error": "Failed to send message to Telegram"}), 500
-
 
         # Extract values
         name = data["name"]
@@ -42,17 +40,35 @@ def send_message():
 
         # Telegram API URL for group message
         telegram_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-        payload = {
+        payload_group = {
             "chat_id": TELEGRAM_CHAT_ID,
             "text": message,
             "parse_mode": "Markdown",
-            "message_thread_id": MESSAGE_THREAD_ID  # Send to a specific thread if needed
         }
 
+        # Send message to a thread if needed
+        if MESSAGE_THREAD_ID:
+            payload_group["message_thread_id"] = MESSAGE_THREAD_ID
+
         # Send message to Telegram group
-        response = requests.post(telegram_url, json=payload)
+        response = requests.post(telegram_url, json=payload_group)
         response_data = response.json()
 
-        # If Telegram request failed
         if not response_data.get("ok"):
-            return jsonify({"success": False, "error": "Failed to se
+            return jsonify({"success": False, "error": "Failed to send message to Telegram"}), 500
+
+        # Send a separate message to Lana
+        payload_lana = {
+            "chat_id": USER_ID,
+            "text": "Lana, please pause the ELD!",
+            "parse_mode": "Markdown",
+        }
+        requests.post(telegram_url, json=payload_lana)
+
+        return jsonify({"success": True, "message": "Message sent successfully!"})
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
