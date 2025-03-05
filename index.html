@@ -96,7 +96,7 @@
         statusMessage.textContent = "Sending request...";
 
         try {
-            let response = await fetch("https://your-render-backend.onrender.com/send-message", { 
+            let response = await fetch("https://off-request-form.onrender.com/send-message", { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, dateFrom, dateTill, reason, eld })
