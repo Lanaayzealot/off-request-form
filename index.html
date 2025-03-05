@@ -1,85 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TIME-OFF REQUEST</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        label {
-            display: block;
-            text-align: left;
-            margin: 5px 0;
-            font-weight: bold;
-        }
-        input, select, textarea {
-            width: 95%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            display: block;
-        }
-        button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 95%;
-            margin: 10px 0;
-            display: block;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h2>TIME-OFF REQUEST</h2>
-    <form id="offRequestForm">
-        <label for="name">Full Name:</label>
-        <input type="text" id="name" name="name" required>
-
-        <label for="date_from">Date Off (From):</label>
-        <input type="text" id="date_from" name="date_from" placeholder="MM/DD/YYYY" required>
-
-        <label for="date_till">Date Off (Till):</label>
-        <input type="text" id="date_till" name="date_till" placeholder="MM/DD/YYYY" required>
-
-        <label for="reason">Reason:</label>
-        <textarea id="reason" name="reason" rows="3" required></textarea>
-
-        <label for="eld">Pause ELD?</label>
-        <select id="eld" name="eld">
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-        </select>
-
-        <button type="submit">Submit</button>
-    </form>
-</div>
+<input type="date" id="date_from" name="date_from" required>
+<input type="date" id="date_till" name="date_till" required>
 
 <script>
-    document.getElementById("offRequestForm").addEventListener("submit", function(event) {
+    document.getElementById("offRequestForm").addEventListener("submit", async function(event) {
         event.preventDefault();
+        
         let name = document.getElementById("name").value;
         let dateFrom = document.getElementById("date_from").value;
         let dateTill = document.getElementById("date_till").value;
@@ -88,19 +13,36 @@
 
         let message = ` TIME-OFF REQUEST \n\n🔹 Name: ${name}\n🔹 Date Off: From ${dateFrom} till ${dateTill}\n🔹 Reason: ${reason}\n🔹 Pause ELD? ${eld}`;
         
-        let telegramBotToken = "7001677306:AAEJAEzCghnWuhPrOwebvivD789BXn-6wm4";  // Replace with your bot token
-        let telegramChatId = "-1002351667124"; // Replace with your Telegram group chat ID
-        let  messageThreadId = 59; // Replace with your thread ID (this is the specific thread you want the message to go to)
+        let telegramBotToken = "YOUR_BOT_TOKEN_HERE"; // Move this to the backend
+        let telegramChatId = "-1002351667124";
+        let messageThreadId = 59;
 
-       const url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(message)}&parse_mode=HTML&message_thread_id=${messageThreadId}`;
-
+        let url = `https://api.telegram.org/bot${telegramBotToken}/sendMessage`;
         
-        fetch(url)
-            .then(response => response.json())
-            .then(data => alert("Request Sent Successfully!"))
-            .catch(error => alert("Error sending request."));
+        let payload = {
+            chat_id: telegramChatId,
+            text: message,
+            parse_mode: "HTML",
+            message_thread_id: messageThreadId
+        };
+
+        try {
+            let response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            
+            let data = await response.json();
+            if (data.ok) {
+                alert("✅ Request Sent Successfully!");
+            } else {
+                alert("❌ Error sending request.");
+                console.error(data);
+            }
+        } catch (error) {
+            alert("❌ Error sending request.");
+            console.error(error);
+        }
     });
 </script>
-
-</body>
-</html>
