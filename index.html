@@ -62,6 +62,9 @@
         <label for="name">Full Name:</label>
         <input type="text" id="name" name="name" required>
 
+        <label for="truck_number">Truck Number:</label>
+        <input type="text" id="truck_number" name="truck_number" required>
+
         <label for="date_from">Date Off (From):</label>
         <input type="date" id="date_from" name="date_from" required>
 
@@ -87,6 +90,7 @@
         event.preventDefault();
         
         let name = document.getElementById("name").value;
+        let truckNumber = document.getElementById("truck_number").value;
         let dateFrom = document.getElementById("date_from").value;
         let dateTill = document.getElementById("date_till").value;
         let reason = document.getElementById("reason").value;
@@ -99,7 +103,7 @@
             let response = await fetch("https://off-request-form.onrender.com/send-message", { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, dateFrom, dateTill, reason, eld })
+                body: JSON.stringify({ name, truckNumber, dateFrom, dateTill, reason, eld })
             });
 
             let data = await response.json();
