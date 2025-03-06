@@ -42,13 +42,13 @@ def send_message():
         message = (
             f"📝 *TIME-OFF REQUEST* \n\n"
             f"🔹 *Name:* {name}\n"
-			f"🔹 *Truck Number:* {truck_number}"
+	    f"🔹 *Truck Number:* {truck_number}"
             f"🔹 *Date Off:* From {date_from} till {date_till}\n"
             f"🔹 *Reason:* {reason}\n"
             f"🔹 *Pause ELD?:* {eld}\n"
-			f"🔹 *Pause insurance for the truck?:* {truck_number}\n"
+	    f"🔹 *Pause insurance for the truck?:* {truck_number}\n"
             
-			⚠️The driver {name} will be back to work on {date_till}
+	    f"⚠️The driver {name} will be back to work on {date_till}
 			
         )
 
