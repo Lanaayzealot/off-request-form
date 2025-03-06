@@ -11,7 +11,6 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "-1002351667124")  # Replace with actual ID
 MESSAGE_THREAD_ID = os.getenv("MESSAGE_THREAD_ID", "59")  # Convert to int if necessary
 USER_ID_LANA = os.getenv("USER_ID_LANA", "7122508724")  # Lana's Telegram user ID
-USER_ID_RAUAN = os.getenv("USER_ID_RAUAN", "1546986728")  # Rauan's Telegram user ID
 
 # Ensure required environment variables are set
 if not TELEGRAM_BOT_TOKEN:
@@ -42,14 +41,11 @@ def send_message():
         message = (
             f"📝 *TIME-OFF REQUEST* \n\n"
             f"🔹 *Name:* {name}\n"
-	    f"🔹 *Truck Number:* {truck_number}"
+            f"🔹 *Truck Number:* {truck_number}\n"
             f"🔹 *Date Off:* From {date_from} till {date_till}\n"
             f"🔹 *Reason:* {reason}\n"
-            f"🔹 *Pause ELD?:* {eld}\n"
-	    f"🔹 *Pause insurance for the truck?:* {truck_number}\n"
-            
-	    f"⚠️The driver {name} will be back to work on {date_till}
-			
+            f"🔹 *Pause ELD?:* {eld}\n\n"
+            f"⚠️ The driver {name} will be back to work on {date_till}."
         )
 
         # Prepare payload for group message
@@ -66,23 +62,15 @@ def send_message():
 
         # Send a message to Lana in the same thread
         payload_lana = {
-            "chat_id": USER_ID_LANA,
-            "text": f"Good day Lana (@semitruckZealot)!, please deactivate the ELD for driver {name}. Check on Activate it on {date_till}. 	Thank you!",
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": f"Good day [Lana](tg://user?id={USER_ID_LANA})! Please deactivate the ELD for driver {name}. "
+                    f"Check to activate it again on {date_till}. Thank you!",
             "parse_mode": "Markdown",
             "message_thread_id": int(MESSAGE_THREAD_ID)  # Same thread ID as group message
         }
         requests.post(TELEGRAM_API_URL, json=payload_lana)
 
-        # Send a message to Rauan in the same thread
-        payload_rauan = {
-            "chat_id": USER_ID_RAUAN,
-            "text": f"Good day Rauan (ahura_mazda12)! Please place on hold the insurance for the truck {truck_number}. Thank you!",
-            "parse_mode": "Markdown",
-            "message_thread_id": int(MESSAGE_THREAD_ID)  # Same thread ID as group message
-        }
-        requests.post(TELEGRAM_API_URL, json=payload_rauan)
-
-        return jsonify({"success": True, "message": " Your request has been sent successfully!"})
+        return jsonify({"success": True, "message": "Your request has been sent successfully!"})
 
     except requests.exceptions.RequestException as e:
         return jsonify({"success": False, "error": f"Telegram API error: {str(e)}"}), 500
