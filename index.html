@@ -65,6 +65,15 @@
         <label for="truck_number">Truck Number:</label>
         <input type="text" id="truck_number" name="truck_number" required>
 
+        <label for="company">Company:</label>
+        <select id="company" name="company" required>
+            <option value="">Select Company</option>
+            <option value="Sayram Express LLC">Sayram Express LLC</option>
+            <option value="Golden Mile LLC">Golden Mile LLC</option>
+            <option value="Iconic Logistics LLC">Iconic Logistics LLC</option>
+            <option value="Sayram Logistics CO">Sayram Logistics CO</option>
+        </select>
+
         <label for="date_from">Date Off (From):</label>
         <input type="date" id="date_from" name="date_from" required>
 
@@ -74,8 +83,8 @@
         <label for="reason">Reason:</label>
         <textarea id="reason" name="reason" rows="3" required></textarea>
 
-        <label for="eld">Pause ELD?</label>
-        <select id="eld" name="eld">
+        <label for="pause_insurance_eld">Pause Insurance and ELD?</label>
+        <select id="pause_insurance_eld" name="pause_insurance_eld" required>
             <option value="Yes">Yes</option>
             <option value="No">No</option>
         </select>
@@ -91,10 +100,11 @@
         
         let name = document.getElementById("name").value;
         let truckNumber = document.getElementById("truck_number").value;
+        let company = document.getElementById("company").value;
         let dateFrom = document.getElementById("date_from").value;
         let dateTill = document.getElementById("date_till").value;
         let reason = document.getElementById("reason").value;
-        let eld = document.getElementById("eld").value;
+        let pauseInsuranceEld = document.getElementById("pause_insurance_eld").value;
 
         let statusMessage = document.getElementById("statusMessage");
         statusMessage.textContent = "Sending request...";
@@ -103,7 +113,7 @@
             let response = await fetch("https://off-request-form.onrender.com/send-message", { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, truckNumber, dateFrom, dateTill, reason, eld })
+                body: JSON.stringify({ name, truckNumber, company, dateFrom, dateTill, reason, pauseInsuranceEld })
             });
 
             let data = await response.json();
