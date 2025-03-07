@@ -46,7 +46,7 @@ def send_message():
         logging.debug(f"📩 Received data: {data}")
 
         # Validate required fields (eld removed)
-        required_fields = ["name", "dateFrom", "dateTill", "reason", "truckNumber", "company", "pauseInsuranceEld"]
+        required_fields = ["name", "dateFrom", "reason", "truckNumber", "company", "pauseInsuranceEld"]
         if not all(field in data and data[field] for field in required_fields):
             missing_fields = [field for field in required_fields if field not in data or not data[field]]
             logging.warning(f"❌ Missing or invalid fields: {missing_fields}")
@@ -57,9 +57,14 @@ def send_message():
         truck_number = data["truckNumber"]
         company = data["company"]
         date_from = data["dateFrom"]
-        date_till = data["dateTill"]
+        date_till = data.get("dateTill", "")  # Default to empty string if not provided
+        unknown_date_till = data.get("unknownDateTill", False)  # Boolean indicating if date_till is unknown
         reason = data["reason"]
         pause_insurance_eld = data["pauseInsuranceEld"]
+
+        # Handle unknown date till
+        if unknown_date_till:
+            date_till = "Unknown"
 
         # Construct the message for Telegram (eld removed)
         message = (
