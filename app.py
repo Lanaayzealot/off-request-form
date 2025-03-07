@@ -15,9 +15,9 @@ CORS(app)
 # Configure logging (sensitive data should not be logged)
 logging.basicConfig(level=logging.DEBUG)
 
-# Load environment variables
+# Load environment variables from the .env file
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "-1002351667124")  # Replace with actual ID
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "-1002351667124")  # Default to a specific ID if not set
 MESSAGE_THREAD_ID = os.getenv("MESSAGE_THREAD_ID", "59")  # Convert to int if necessary
 USER_ID_LANA = os.getenv("USER_ID_LANA", "7122508724")  # Lana's Telegram user ID
 
@@ -32,6 +32,7 @@ TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessag
 logging.debug(f"✅ TELEGRAM_CHAT_ID: {TELEGRAM_CHAT_ID}")
 logging.debug(f"✅ MESSAGE_THREAD_ID: {MESSAGE_THREAD_ID}")
 logging.debug(f"✅ USER_ID_LANA: {USER_ID_LANA}")
+
 
 @app.route('/send-message', methods=['POST'])
 def send_message():
