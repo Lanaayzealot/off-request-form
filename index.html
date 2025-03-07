@@ -74,14 +74,14 @@
             <option value="Sayram Logistics CO">Sayram Logistics CO</option>
         </select>
 
-        <label for="date_from">Date Off (From):</label>
+        <label for="date_from">Off Since:</label>
         <input type="date" id="date_from" name="date_from" required>
 
-        <label for="date_till">Date Off (Till):</label>
-        <input type="date" id="date_till" name="date_till">
+        <label for="unknown_date_till">Off Until: Unknown</label>
+        <input type="checkbox" id="unknown_date_till" name="unknown_date_till" onclick="toggleDateTill()">
 
-        <label for="unknown_date_till">Unknown Date Till:</label>
-        <input type="checkbox" id="unknown_date_till" name="unknown_date_till">
+        <label for="date_till">Off Until:</label>
+        <input type="date" id="date_till" name="date_till" disabled>
 
         <label for="reason">Reason:</label>
         <textarea id="reason" name="reason" rows="3" required></textarea>
@@ -98,6 +98,12 @@
 </div>
 
 <script>
+    function toggleDateTill() {
+        const dateTillField = document.getElementById("date_till");
+        const unknownDateTill = document.getElementById("unknown_date_till").checked;
+        dateTillField.disabled = unknownDateTill;
+    }
+
     document.getElementById("offRequestForm").addEventListener("submit", async function(event) {
         event.preventDefault();
         
@@ -119,10 +125,10 @@
         statusMessage.textContent = "Sending request...";
 
         try {
-            let response = await fetch("https://off-request-form.onrender.com/send-message", { 
+            let response = await fetch("http://127.0.0.1:5000/send-message", { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, truckNumber, company, dateFrom, dateTill, reason, pauseInsuranceEld })
+                body: JSON.stringify({ name, truckNumber, company, dateFrom, dateTill, reason, pauseInsuranceEld, unknownDateTill })
             });
 
             let data = await response.json();
