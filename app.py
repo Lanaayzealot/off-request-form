@@ -113,12 +113,3 @@ def send_message():
 
 if __name__ == '__main__':
     app.run(debug=True)
-	
-	
-	
-добавить потом
-add user Rauan to the code (user ID 1546986728)
-add response to user Rauan:
-
-"Good day Rauan! Please place on hold the insurance for truck {truck_number}. 
-Check to resume it again on {date_till}. Thank you!"
