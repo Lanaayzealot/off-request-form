@@ -5,14 +5,14 @@ import os
 import logging
 from dotenv import load_dotenv
 
-# Load environment variables
+# Load environment variables from .env file
 load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
 CORS(app)
 
-# Configure logging
+# Configure logging (sensitive data should not be logged)
 logging.basicConfig(level=logging.DEBUG)
 
 # Load environment variables
@@ -32,7 +32,6 @@ TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessag
 logging.debug(f"✅ TELEGRAM_CHAT_ID: {TELEGRAM_CHAT_ID}")
 logging.debug(f"✅ MESSAGE_THREAD_ID: {MESSAGE_THREAD_ID}")
 logging.debug(f"✅ USER_ID_LANA: {USER_ID_LANA}")
-
 
 @app.route('/send-message', methods=['POST'])
 def send_message():
@@ -99,6 +98,11 @@ def send_message():
         }
         response_lana = requests.post(TELEGRAM_API_URL, json=payload_lana)
         logging.debug(f"📨 Telegram Lana Response: {response_lana.status_code} {response_lana.text}")
+        
+        # Check if the response from Lana's message was successful
+        if not response_lana.ok:
+            logging.error(f"❌ Error sending message to Lana: {response_lana.text}")
+            return jsonify({"success": False, "error": "Failed to notify Lana."}), 500
 
         return jsonify({"success": True, "message": "Your request has been sent successfully!"})
 
