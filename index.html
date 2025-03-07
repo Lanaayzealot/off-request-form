@@ -78,7 +78,10 @@
         <input type="date" id="date_from" name="date_from" required>
 
         <label for="date_till">Date Off (Till):</label>
-        <input type="date" id="date_till" name="date_till" required>
+        <input type="date" id="date_till" name="date_till">
+
+        <label for="unknown_date_till">Unknown Date Till:</label>
+        <input type="checkbox" id="unknown_date_till" name="unknown_date_till">
 
         <label for="reason">Reason:</label>
         <textarea id="reason" name="reason" rows="3" required></textarea>
@@ -103,8 +106,14 @@
         let company = document.getElementById("company").value;
         let dateFrom = document.getElementById("date_from").value;
         let dateTill = document.getElementById("date_till").value;
+        let unknownDateTill = document.getElementById("unknown_date_till").checked;
         let reason = document.getElementById("reason").value;
         let pauseInsuranceEld = document.getElementById("pause_insurance_eld").value;
+
+        // If the checkbox is checked, set dateTill to an empty string to indicate unknown date
+        if (unknownDateTill) {
+            dateTill = "";
+        }
 
         let statusMessage = document.getElementById("statusMessage");
         statusMessage.textContent = "Sending request...";
