@@ -15,11 +15,11 @@ CORS(app)
 # Configure logging (sensitive data should not be logged)
 logging.basicConfig(level=logging.DEBUG)
 
-# Load environment variables from the .env file
+# Load environment variables
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "-1002351667124")  # Default to a specific ID if not set
-MESSAGE_THREAD_ID = os.getenv("MESSAGE_THREAD_ID", "59")  # Convert to int if necessary
-USER_ID_LANA = os.getenv("USER_ID_LANA", "7122508724")  # Lana's Telegram user ID
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "-1002351667124")
+MESSAGE_THREAD_ID = os.getenv("MESSAGE_THREAD_ID", "59")
+USER_ID_LANA = os.getenv("USER_ID_LANA", "7122508724")
 
 # Ensure required environment variables are set
 if not TELEGRAM_BOT_TOKEN:
@@ -37,7 +37,6 @@ logging.debug(f"✅ USER_ID_LANA: {USER_ID_LANA}")
 @app.route('/send-message', methods=['POST'])
 def send_message():
     try:
-        # Check if request contains JSON
         if not request.is_json:
             logging.warning("❌ Invalid request: Content-Type must be application/json")
             return jsonify({"success": False, "error": "Invalid content type, expecting JSON"}), 400
@@ -46,24 +45,23 @@ def send_message():
         data = request.json
         logging.debug(f"📩 Received data: {data}")
 
-        # Validate required fields
-        required_fields = ["name", "dateFrom", "dateTill", "reason", "eld", "truckNumber", "company", "pauseInsuranceEld"]
+        # Validate required fields (eld removed)
+        required_fields = ["name", "dateFrom", "dateTill", "reason", "truckNumber", "company", "pauseInsuranceEld"]
         if not all(field in data and data[field] for field in required_fields):
             missing_fields = [field for field in required_fields if field not in data or not data[field]]
             logging.warning(f"❌ Missing or invalid fields: {missing_fields}")
             return jsonify({"success": False, "error": f"Missing or invalid fields: {missing_fields}"}), 400
 
-        # Extract values
+        # Extract values (eld removed)
         name = data["name"]
         truck_number = data["truckNumber"]
         company = data["company"]
         date_from = data["dateFrom"]
         date_till = data["dateTill"]
         reason = data["reason"]
-        eld = data["eld"]
         pause_insurance_eld = data["pauseInsuranceEld"]
 
-        # Construct the message for Telegram (group)
+        # Construct the message for Telegram (eld removed)
         message = (
             f"📝 *TIME-OFF REQUEST* \n\n"
             f"🔹 *Name:* {name}\n"
@@ -71,36 +69,34 @@ def send_message():
             f"🔹 *Company:* {company}\n"
             f"🔹 *Date Off:* From {date_from} till {date_till}\n"
             f"🔹 *Reason:* {reason}\n"
-            f"🔹 *Pause ELD?:* {eld}\n"
             f"🔹 *Pause Insurance and ELD?:* {pause_insurance_eld}\n\n"
             f"⚠️ The driver {name} will be back to work on {date_till}."
         )
 
-        # Prepare payload for group message
+        # Send message to Telegram group
         payload_group = {
             "chat_id": TELEGRAM_CHAT_ID,
             "text": message,
             "parse_mode": "Markdown",
-            "message_thread_id": int(MESSAGE_THREAD_ID)  # Include thread ID for group message
+            "message_thread_id": int(MESSAGE_THREAD_ID)
         }
 
-        # Send message to Telegram group
         response = requests.post(TELEGRAM_API_URL, json=payload_group)
         logging.debug(f"📨 Telegram Group Response: {response.status_code} {response.text}")
-        response.raise_for_status()  # Raise an error for HTTP failures
+        response.raise_for_status()
 
-        # Send a message to Lana in the same thread
+        # Send a message to Lana (eld mention removed)
         payload_lana = {
             "chat_id": TELEGRAM_CHAT_ID,
-            "text": f"Good day [Lana](tg://user?id={USER_ID_LANA})! Please deactivate the ELD for driver {name}. "
-                    f"Check to activate it again on {date_till}. Thank you!",
+            "text": f"Good day [Lana](tg://user?id={USER_ID_LANA})! "
+                    f"Please check the time-off request for driver {name}. "
+                    f"They will be back on {date_till}. Thank you!",
             "parse_mode": "Markdown",
-            "message_thread_id": int(MESSAGE_THREAD_ID)  # Same thread ID as group message
+            "message_thread_id": int(MESSAGE_THREAD_ID)
         }
         response_lana = requests.post(TELEGRAM_API_URL, json=payload_lana)
         logging.debug(f"📨 Telegram Lana Response: {response_lana.status_code} {response_lana.text}")
-        
-        # Check if the response from Lana's message was successful
+
         if not response_lana.ok:
             logging.error(f"❌ Error sending message to Lana: {response_lana.text}")
             return jsonify({"success": False, "error": "Failed to notify Lana."}), 500
