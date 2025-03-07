@@ -25,26 +25,30 @@ def send_message():
         data = request.json
 
         # Validate required fields
-        required_fields = ["name", "dateFrom", "dateTill", "reason", "eld", "truckNumber"]
+        required_fields = ["name", "dateFrom", "dateTill", "reason", "eld", "truckNumber", "company", "pauseInsuranceEld"]
         if not all(field in data and data[field] for field in required_fields):
             return jsonify({"success": False, "error": "Missing or invalid data"}), 400
 
         # Extract values
         name = data["name"]
+        truck_number = data["truckNumber"]
+        company = data["company"]
         date_from = data["dateFrom"]
         date_till = data["dateTill"]
         reason = data["reason"]
         eld = data["eld"]
-        truck_number = data["truckNumber"]
+        pause_insurance_eld = data["pauseInsuranceEld"]
 
         # Construct the message for Telegram (group)
         message = (
             f"📝 *TIME-OFF REQUEST* \n\n"
             f"🔹 *Name:* {name}\n"
             f"🔹 *Truck Number:* {truck_number}\n"
+            f"🔹 *Company:* {company}\n"
             f"🔹 *Date Off:* From {date_from} till {date_till}\n"
             f"🔹 *Reason:* {reason}\n"
-            f"🔹 *Pause ELD?:* {eld}\n\n"
+            f"🔹 *Pause ELD?:* {eld}\n"
+            f"🔹 *Pause Insurance and ELD?:* {pause_insurance_eld}\n\n"
             f"⚠️ The driver {name} will be back to work on {date_till}."
         )
 
