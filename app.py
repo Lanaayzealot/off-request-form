@@ -1,14 +1,16 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
+import requests
 import os
 import logging
 from dotenv import load_dotenv
-import requests
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
+CORS(app)
 
 # Configure logging (sensitive data should not be logged)
 logging.basicConfig(level=logging.DEBUG)
@@ -43,35 +45,29 @@ def send_message():
         data = request.json
         logging.debug(f"📩 Received data: {data}")
 
-        # Validate required fields
-        required_fields = ["name", "dateFrom", "reason", "truckNumber", "company", "pauseInsuranceEld"]
+        # Validate required fields (eld removed)
+        required_fields = ["name", "dateFrom", "dateTill", "reason", "truckNumber", "company", "pauseInsuranceEld"]
         if not all(field in data and data[field] for field in required_fields):
             missing_fields = [field for field in required_fields if field not in data or not data[field]]
             logging.warning(f"❌ Missing or invalid fields: {missing_fields}")
             return jsonify({"success": False, "error": f"Missing or invalid fields: {missing_fields}"}), 400
 
-        # Extract values
+        # Extract values (eld removed)
         name = data["name"]
-        truck_number = str(data["truckNumber"])  # Ensure truck number is treated as a string
+        truck_number = data["truckNumber"]
         company = data["company"]
         date_from = data["dateFrom"]
-        date_till = data.get("dateTill", "")  # Default to empty string if not provided
-        unknown_date_till = data.get("unknownDateTill", False)  # Boolean indicating if date_till is unknown
+        date_till = data["dateTill"]
         reason = data["reason"]
         pause_insurance_eld = data["pauseInsuranceEld"]
 
-        # Handle unknown date till
-        if unknown_date_till:
-            date_till = "Unknown"
-
-        # Construct the message for Telegram
+        # Construct the message for Telegram (eld removed)
         message = (
             f"📝 *TIME-OFF REQUEST* \n\n"
             f"🔹 *Name:* {name}\n"
-            f"🔹 *Truck Number:* {truck_number}\n"  # Display truck number as text
+            f"🔹 *Truck Number:* {truck_number}\n"
             f"🔹 *Company:* {company}\n"
-            f"🔹 *Off Since:* {date_from}\n"
-            f"🔹 *Off Until:* {date_till}\n"
+            f"🔹 *Date Off:* From {date_from} till {date_till}\n"
             f"🔹 *Reason:* {reason}\n"
             f"🔹 *Pause Insurance and ELD?:* {pause_insurance_eld}\n\n"
             f"⚠️ The driver {name} will be back to work on {date_till}."
@@ -89,7 +85,7 @@ def send_message():
         logging.debug(f"📨 Telegram Group Response: {response.status_code} {response.text}")
         response.raise_for_status()
 
-        # Send a message to Lana
+        # Send a message to Lana (eld mention removed)
         payload_lana = {
             "chat_id": TELEGRAM_CHAT_ID,
             "text": f"Good day [Lana](tg://user?id={USER_ID_LANA})! "
@@ -117,3 +113,12 @@ def send_message():
 
 if __name__ == '__main__':
     app.run(debug=True)
+	
+	
+	
+добавить потом
+add user Rauan to the code (user ID 1546986728)
+add response to user Rauan:
+
+"Good day Rauan! Please place on hold the insurance for truck {truck_number}. 
+Check to resume it again on {date_till}. Thank you!"
