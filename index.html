@@ -74,14 +74,11 @@
             <option value="Sayram Logistics CO">Sayram Logistics CO</option>
         </select>
 
-        <label for="date_from">Off Since:</label>
+        <label for="date_from">Date Off (From):</label>
         <input type="date" id="date_from" name="date_from" required>
 
-        <label for="unknown_date_till">Off Until: Unknown</label>
-        <input type="checkbox" id="unknown_date_till" name="unknown_date_till" onclick="toggleDateTill()">
-
-        <label for="date_till">Off Until:</label>
-        <input type="date" id="date_till" name="date_till" disabled>
+        <label for="date_till">Date Off (Till):</label>
+        <input type="date" id="date_till" name="date_till" required>
 
         <label for="reason">Reason:</label>
         <textarea id="reason" name="reason" rows="3" required></textarea>
@@ -98,12 +95,6 @@
 </div>
 
 <script>
-    function toggleDateTill() {
-        const dateTillField = document.getElementById("date_till");
-        const unknownDateTill = document.getElementById("unknown_date_till").checked;
-        dateTillField.disabled = unknownDateTill;
-    }
-
     document.getElementById("offRequestForm").addEventListener("submit", async function(event) {
         event.preventDefault();
         
@@ -112,23 +103,17 @@
         let company = document.getElementById("company").value;
         let dateFrom = document.getElementById("date_from").value;
         let dateTill = document.getElementById("date_till").value;
-        let unknownDateTill = document.getElementById("unknown_date_till").checked;
         let reason = document.getElementById("reason").value;
         let pauseInsuranceEld = document.getElementById("pause_insurance_eld").value;
-
-        // If the checkbox is checked, set dateTill to an empty string to indicate unknown date
-        if (unknownDateTill) {
-            dateTill = "";
-        }
 
         let statusMessage = document.getElementById("statusMessage");
         statusMessage.textContent = "Sending request...";
 
         try {
-            let response = await fetch("http://127.0.0.1:5000/send-message", { 
+            let response = await fetch("https://off-request-form.onrender.com/send-message", { 
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, truckNumber, company, dateFrom, dateTill, reason, pauseInsuranceEld, unknownDateTill })
+                body: JSON.stringify({ name, truckNumber, company, dateFrom, dateTill, reason, pauseInsuranceEld })
             });
 
             let data = await response.json();
@@ -148,3 +133,5 @@
 
 </body>
 </html>
+
+
