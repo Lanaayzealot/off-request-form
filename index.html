@@ -57,4 +57,109 @@
             align-items: center;
             margin: 10px 0;
         }
- 
+        .checkbox-label input {
+            margin-right: 10px;
+        }
+        .checkbox-label label {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>TIME-OFF REQUEST</h2>
+    <form id="offRequestForm">
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="truck_number">Truck Number:</label>
+        <input type="text" id="truck_number" name="truck_number" required>
+
+        <label for="company">Company:</label>
+        <select id="company" name="company" required>
+            <option value="">Select Company</option>
+            <option value="Sayram Express LLC">Sayram Express LLC</option>
+            <option value="Golden Mile LLC">Golden Mile LLC</option>
+            <option value="Iconic Logistics LLC">Iconic Logistics LLC</option>
+            <option value="Sayram Logistics CO">Sayram Logistics CO</option>
+        </select>
+
+        <label for="date_from">Off Since:</label>
+        <input type="date" id="date_from" name="date_from" required>
+
+        <label for="date_till">Off Until:</label>
+        <input type="date" id="date_till" name="date_till" required>
+
+        <!-- Checkbox positioned before the label -->
+        <div class="checkbox-label">
+            <input type="checkbox" id="unknown_date_till" name="unknown_date_till">
+            <label for="unknown_date_till">Off until: Unknown</label>
+        </div>
+
+        <label for="reason">Reason:</label>
+        <textarea id="reason" name="reason" rows="3" required></textarea>
+
+        <label for="pause_insurance_eld">Pause Insurance and ELD?</label>
+        <select id="pause_insurance_eld" name="pause_insurance_eld" required>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+
+        <button type="submit">Submit</button>
+        <p class="message" id="statusMessage"></p>
+    </form>
+</div>
+
+<script>
+    document.getElementById("offRequestForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        let name = document.getElementById("name").value;
+        let truckNumber = document.getElementById("truck_number").value;
+        let company = document.getElementById("company").value;
+        let dateFrom = document.getElementById("date_from").value;
+        let dateTill = document.getElementById("date_till").value;
+        let reason = document.getElementById("reason").value;
+        let pauseInsuranceEld = document.getElementById("pause_insurance_eld").value;
+        let unknownDateTill = document.getElementById("unknown_date_till").checked;
+
+        if (unknownDateTill) {
+            dateTill = "Unknown";  
+            document.getElementById("date_till").disabled = true;
+        } else {
+            document.getElementById("date_till").disabled = false;
+        }
+
+        let statusMessage = document.getElementById("statusMessage");
+        statusMessage.textContent = "Sending request...";
+
+        try {
+            let response = await fetch("https://off-request-form.onrender.com/send-message", { 
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, truckNumber, company, dateFrom, dateTill, reason, pauseInsuranceEld })
+            });
+
+            let data = await response.json();
+            if (data.success) {
+                statusMessage.textContent = "✅ Request Sent Successfully!";
+                statusMessage.style.color = "green";
+            } else {
+                statusMessage.textContent = "❌ Error sending request.";
+                statusMessage.style.color = "red";
+            }
+        } catch (error) {
+            statusMessage.textContent = "❌ Error sending request.";
+            statusMessage.style.color = "red";
+        }
+    });
+
+    document.getElementById("unknown_date_till").addEventListener("change", function() {
+        let dateTillField = document.getElementById("date_till");
+        dateTillField.disabled = this.checked;
+    });
+</script>
+
+</body>
+</html>
