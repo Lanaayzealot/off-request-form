@@ -1,137 +1,119 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TIME-OFF REQUEST</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
+from flask import Flask, request, jsonify
+import os
+import logging
+from dotenv import load_dotenv
+import requests
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Initialize Flask app
+app = Flask(__name__)
+
+# Configure logging (sensitive data should not be logged)
+logging.basicConfig(level=logging.DEBUG)
+
+# Load environment variables
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "-1002351667124")
+MESSAGE_THREAD_ID = os.getenv("MESSAGE_THREAD_ID", "59")
+USER_ID_LANA = os.getenv("USER_ID_LANA", "7122508724")
+
+# Ensure required environment variables are set
+if not TELEGRAM_BOT_TOKEN:
+    raise ValueError("❌ TELEGRAM_BOT_TOKEN is not set in the environment.")
+
+# Telegram API URL
+TELEGRAM_API_URL = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+
+# Log environment values (excluding sensitive ones)
+logging.debug(f"✅ TELEGRAM_CHAT_ID: {TELEGRAM_CHAT_ID}")
+logging.debug(f"✅ MESSAGE_THREAD_ID: {MESSAGE_THREAD_ID}")
+logging.debug(f"✅ USER_ID_LANA: {USER_ID_LANA}")
+
+
+@app.route('/send-message', methods=['POST'])
+def send_message():
+    try:
+        if not request.is_json:
+            logging.warning("❌ Invalid request: Content-Type must be application/json")
+            return jsonify({"success": False, "error": "Invalid content type, expecting JSON"}), 400
+
+        # Get JSON data from request
+        data = request.json
+        logging.debug(f"📩 Received data: {data}")
+
+        # Validate required fields
+        required_fields = ["name", "dateFrom", "reason", "truckNumber", "company", "pauseInsuranceEld"]
+        if not all(field in data and data[field] for field in required_fields):
+            missing_fields = [field for field in required_fields if field not in data or not data[field]]
+            logging.warning(f"❌ Missing or invalid fields: {missing_fields}")
+            return jsonify({"success": False, "error": f"Missing or invalid fields: {missing_fields}"}), 400
+
+        # Extract values
+        name = data["name"]
+        truck_number = str(data["truckNumber"])  # Ensure truck number is treated as a string
+        company = data["company"]
+        date_from = data["dateFrom"]
+        date_till = data.get("dateTill", "")  # Default to empty string if not provided
+        unknown_date_till = data.get("unknownDateTill", False)  # Boolean indicating if date_till is unknown
+        reason = data["reason"]
+        pause_insurance_eld = data["pauseInsuranceEld"]
+
+        # Handle unknown date till
+        if unknown_date_till:
+            date_till = "Unknown"
+
+        # Construct the message for Telegram
+        message = (
+            f"📝 *TIME-OFF REQUEST* \n\n"
+            f"🔹 *Name:* {name}\n"
+            f"🔹 *Truck Number:* {truck_number}\n"  # Display truck number as text
+            f"🔹 *Company:* {company}\n"
+            f"🔹 *Off Since:* {date_from}\n"
+            f"🔹 *Off Until:* {date_till}\n"
+            f"🔹 *Reason:* {reason}\n"
+            f"🔹 *Pause Insurance and ELD?:* {pause_insurance_eld}\n\n"
+            f"⚠️ The driver {name} will be back to work on {date_till}."
+        )
+
+        # Send message to Telegram group
+        payload_group = {
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": message,
+            "parse_mode": "Markdown",
+            "message_thread_id": int(MESSAGE_THREAD_ID)
         }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            margin: 0 auto;
+
+        response = requests.post(TELEGRAM_API_URL, json=payload_group)
+        logging.debug(f"📨 Telegram Group Response: {response.status_code} {response.text}")
+        response.raise_for_status()
+
+        # Send a message to Lana
+        payload_lana = {
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": f"Good day [Lana](tg://user?id={USER_ID_LANA})! "
+                    f"Please check the time-off request for driver {name}. "
+                    f"They will be back on {date_till}. Thank you!",
+            "parse_mode": "Markdown",
+            "message_thread_id": int(MESSAGE_THREAD_ID)
         }
-        label {
-            display: block;
-            text-align: left;
-            margin: 5px 0;
-            font-weight: bold;
-        }
-        input, select, textarea {
-            width: 95%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            display: block;
-        }
-        button {
-            background-color: #28a745;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 95%;
-            margin: 10px 0;
-            display: block;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        .message {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
+        response_lana = requests.post(TELEGRAM_API_URL, json=payload_lana)
+        logging.debug(f"📨 Telegram Lana Response: {response_lana.status_code} {response_lana.text}")
 
-<div class="container">
-    <h2>TIME-OFF REQUEST</h2>
-    <form id="offRequestForm">
-        <label for="name">Full Name:</label>
-        <input type="text" id="name" name="name" required>
+        if not response_lana.ok:
+            logging.error(f"❌ Error sending message to Lana: {response_lana.text}")
+            return jsonify({"success": False, "error": "Failed to notify Lana."}), 500
 
-        <label for="truck_number">Truck Number:</label>
-        <input type="text" id="truck_number" name="truck_number" required>
+        return jsonify({"success": True, "message": "Your request has been sent successfully!"})
 
-        <label for="company">Company:</label>
-        <select id="company" name="company" required>
-            <option value="">Select Company</option>
-            <option value="Sayram Express LLC">Sayram Express LLC</option>
-            <option value="Golden Mile LLC">Golden Mile LLC</option>
-            <option value="Iconic Logistics LLC">Iconic Logistics LLC</option>
-            <option value="Sayram Logistics CO">Sayram Logistics CO</option>
-        </select>
-
-        <label for="date_from">Date Off (From):</label>
-        <input type="date" id="date_from" name="date_from" required>
-
-        <label for="date_till">Date Off (Till):</label>
-        <input type="date" id="date_till" name="date_till" required>
-
-        <label for="reason">Reason:</label>
-        <textarea id="reason" name="reason" rows="3" required></textarea>
-
-        <label for="pause_insurance_eld">Pause Insurance and ELD?</label>
-        <select id="pause_insurance_eld" name="pause_insurance_eld" required>
-            <option value="Yes">Yes</option>
-            <option value="No">No</option>
-        </select>
-
-        <button type="submit">Submit</button>
-        <p class="message" id="statusMessage"></p>
-    </form>
-</div>
-
-<script>
-    document.getElementById("offRequestForm").addEventListener("submit", async function(event) {
-        event.preventDefault();
-        
-        let name = document.getElementById("name").value;
-        let truckNumber = document.getElementById("truck_number").value;
-        let company = document.getElementById("company").value;
-        let dateFrom = document.getElementById("date_from").value;
-        let dateTill = document.getElementById("date_till").value;
-        let reason = document.getElementById("reason").value;
-        let pauseInsuranceEld = document.getElementById("pause_insurance_eld").value;
-
-        let statusMessage = document.getElementById("statusMessage");
-        statusMessage.textContent = "Sending request...";
-
-        try {
-            let response = await fetch("https://off-request-form.onrender.com/send-message", { 
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, truckNumber, company, dateFrom, dateTill, reason, pauseInsuranceEld })
-            });
-
-            let data = await response.json();
-            if (data.success) {
-                statusMessage.textContent = "✅ Request Sent Successfully!";
-                statusMessage.style.color = "green";
-            } else {
-                statusMessage.textContent = "❌ Error sending request.";
-                statusMessage.style.color = "red";
-            }
-        } catch (error) {
-            statusMessage.textContent = "❌ Error sending request.";
-            statusMessage.style.color = "red";
-        }
-    });
-</script>
-
-</body>
-</html>
+    except requests.exceptions.RequestException as e:
+        logging.error(f"❌ Telegram API error: {str(e)}")
+        return jsonify({"success": False, "error": f"Telegram API error: {str(e)}"}), 500
+    except Exception as e:
+        logging.error(f"❌ Server error: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
+if __name__ == '__main__':
+    app.run(debug=True)
